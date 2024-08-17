@@ -1,0 +1,42 @@
+name: 📦 Release Package
+
+permissions:
+  contents: read
+  packages: write
+
+on:
+  release:
+    types: [ published ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: ⬇️ Checkout
+        uses: actions/checkout@v4
+
+      - uses: 📋 pnpm/action-setup@v4
+        name: Install pnpm
+        with:
+          run_install: false
+
+      - name: 🧶 Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: ".nvmrc"
+          cache: pnpm
+          registry-url: 'https://npm.pkg.github.com'
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: ⚙️ Enable corepack
+        run: corepack enable
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: 🔧 Build
+        run: pnpm build
+
+      - name: 🚀 Publish
+        run: pnpm publish --no-git-checks
