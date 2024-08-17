@@ -1,6 +1,6 @@
 import {pino} from 'pino';
 import {LoggerConfig} from './config.js';
-import {Logger} from './logger.js';
+import {LogContext, Logger} from './logger.js';
 
 const DEFAULT_SEND_INTERVAL = 5000;
 const DEFAULT_ENVIRONMENT = process.env.NODE_ENV ?? 'development';
@@ -42,23 +42,23 @@ export class LoggerImpl implements Logger {
     this.logger = pino(transport);
   }
 
-  info(msg: string, ...args: any[]): void;
-  info<T extends object>(obj: T, msg?: string, ...args: any[]): void {
-    this.logger.info(obj, msg, ...args);
+  info(msg: string): void;
+  info<T extends LogContext>(context: T, msg?: string): void {
+    this.logger.info(context, msg);
   }
 
-  warn(msg: string, ...args: any[]): void;
-  warn<T extends object>(obj: T, msg?: string, ...args: any[]): void {
-    this.logger.info(obj, msg, ...args);
+  warn(msg: string): void;
+  warn<T extends LogContext>(context: T, msg?: string): void {
+    this.logger.warn(context, msg);
   }
 
-  error(msg: string, ...args: any[]): void;
-  error<T extends object>(obj: T, msg?: string, ...args: any[]): void {
-    this.logger.info(obj, msg, ...args);
+  error(msg: string): void;
+  error<T extends LogContext>(context: T, msg?: string): void {
+    this.logger.error(context, msg);
   }
 
-  debug(msg: string, ...args: any[]): void;
-  debug<T extends object>(obj: T, msg?: string, ...args: any[]): void {
-    this.logger.info(obj, msg, ...args);
+  debug(msg: string): void;
+  debug<T extends LogContext>(context: T, msg?: string): void {
+    this.logger.debug(context, msg);
   }
 }

@@ -1,6 +1,12 @@
+export type LogContext = Error | Record<string, any> | {
+  [key: string]: any;
+  err: Error;
+}
+
 interface LogFn {
-  <T extends object>(obj: T, msg?: string, ...args: any[]): void;
-  (msg: string, ...args: any[]): void;
+  <T extends LogContext>(context: T, msg?: string): void;
+
+  (msg: string): void;
 }
 
 export interface Logger {
