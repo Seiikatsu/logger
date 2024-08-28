@@ -1,4 +1,4 @@
-import {pino} from 'pino';
+import {pino, TransportTargetOptions} from 'pino';
 import {LoggerConfig} from './config.js';
 import {LogContext, Logger} from './logger.js';
 
@@ -10,33 +10,37 @@ export class LoggerImpl implements Logger {
   private readonly logger: pino.Logger;
 
   constructor(config: LoggerConfig) {
-    const transport = pino.transport({
-      targets: [
-        {
-          target: 'pino-pretty',
-          options: {
-            colorize: true,
-            ignore: 'pid,hostname'
-          },
+    const targets: TransportTargetOptions[] = [
+      {
+        target: 'pino-pretty',
+        options: {
+          colorize: true,
+          ignore: 'pid,hostname'
         },
-        {
-          target: 'pino-loki',
-          options: {
-            batching: true,
-            interval: (config.loki.sendInternalMs ?? DEFAULT_SEND_INTERVAL) / 1000,
+      },
+    ];
+    if (config.loki) {
+      targets.push({
+        target: 'pino-loki',
+        options: {
+          batching: true,
+          interval: (config.loki.sendInternalMs ?? DEFAULT_SEND_INTERVAL) / 1000,
 
-            labels: {
-              ...(config.loki.labels ?? {}),
-              service: config.serviceName,
-              environment: config.environment ?? DEFAULT_ENVIRONMENT,
-              version: config.serviceVersion ?? DEFAULT_SERVICE_VERSION,
-            },
-
-            host: config.loki.host,
-            basicAuth: config.loki.auth,
+          labels: {
+            ...(config.loki.labels ?? {}),
+            service: config.serviceName,
+            environment: config.environment ?? DEFAULT_ENVIRONMENT,
+            version: config.serviceVersion ?? DEFAULT_SERVICE_VERSION,
           },
-        }
-      ],
+
+          host: config.loki.host,
+          basicAuth: config.loki.auth,
+        },
+      });
+    }
+
+    const transport = pino.transport({
+      targets,
     });
 
     this.logger = pino(transport);

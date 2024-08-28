@@ -9,7 +9,7 @@ export type LoggerConfig = {
    */
   environment?: string;
 
-  loki: {
+  loki?: {
     /**
      * Loki server URL.
      */
