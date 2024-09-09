@@ -12,7 +12,7 @@
   ],
   "author": ".Seikatsu <seikatsu@seikatsu.io> (https://www.seikatsu.io/)",
   "dependencies": {
-    "pino": "^9.0.0",
+    "pino": "^9.4.0",
     "pino-loki": "^2.3.0",
     "pino-pretty": "^11.2.2"
   },
