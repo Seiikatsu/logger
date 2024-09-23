@@ -2,7 +2,7 @@ import {pino, TransportTargetOptions} from 'pino';
 import {LoggerConfig} from './config.js';
 import {LogContext, Logger} from './logger.js';
 
-const DEFAULT_SEND_INTERVAL = 5000;
+const DEFAULT_SEND_INTERVAL_MS = 5000;
 const DEFAULT_ENVIRONMENT = process.env.NODE_ENV ?? 'development';
 const DEFAULT_SERVICE_VERSION = process.env.npm_package_version ?? 'unknown';
 
@@ -24,7 +24,7 @@ export class LoggerImpl implements Logger {
         target: 'pino-loki',
         options: {
           batching: true,
-          interval: (config.loki.sendInternalMs ?? DEFAULT_SEND_INTERVAL) / 1000,
+          interval: (config.loki.sendInternalMs ?? DEFAULT_SEND_INTERVAL_MS) / 1000,
 
           labels: {
             ...(config.loki.labels ?? {}),
